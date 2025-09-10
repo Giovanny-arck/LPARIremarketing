@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/img logo e fundo/favicon ari.png" type="image/png">
+  <title>ARI - Ativos de Renda Imobiliária</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <section class="hero-section">
+    <div class="hero-background"></div>
+    <div class="hero-overlay"></div>
+    
+    <div class="container">
+      <!-- Conteúdo à esquerda -->
+      <div class="text-content">
+        <div class="header-container">
+          <div class="logo-container">
+            <img src="/img logo e fundo/logo ajustada lp.png" alt="ARI - Ativo de Renda Imobiliária" class="logo-img">
+          </div>
+        </div>
+
+        <h2 class="hero-title">
+          Conquiste retornos de até 3% ao mês livre de imposto de renda, com investimentos em ARI - Ativos de Renda Imobiliária no litoral de Santa Catarina.
+        </h2>
+
+        <p class="hero-subtitle">
+          Os Ativos de Renda Imobiliária (ARI) representam uma oportunidade sólida para quem busca multiplicar o patrimônio ou conquistar rendimentos mensais consistentes.
+        </p>
+
+        <p class="hero-subtitle">
+          O Litoral de Santa Catarina, uma das regiões mais valorizadas e promissoras do país, oferece o cenário ideal para investimentos seguros e altamente rentáveis.
+        </p>
+      </div>
+      
+      <!-- Formulário à direita -->
+      <div class="form-container">
+        <h3 class="form-title">Cadastre-se agora para garantir sua vaga!</h3>
+        
+        <form id="register-form" class="form">
+          <div class="form-group">
+            <input type="text" name="nome" placeholder="Nome*" class="form-input" required>
+          </div>
+          
+          <div class="form-group">
+            <input type="email" name="email" placeholder="Email*" class="form-input" required>
+          </div>
+
+          <div class="form-group">
+            <input type="text" name="profissao" placeholder="Profissão*" class="form-input" required>
+          </div>
+          
+          <div class="form-group">
+            <input type="tel" name="whatsapp" placeholder="+55 DDD + Numero*" class="form-input" required>
+          </div>
+          
+          <div class="form-group">
+            <select name="valor_investimento" class="form-select" required>
+              <option value="">Qual o valor inicial do seu investimento?*</option>
+              <option value="Até 50 mil">Até 50 mil</option>
+              <option value="50-100">De 50 mil a 100 mil</option>
+              <option value="100-150">De 100 mil a 150 mil</option>
+              <option value="150-200">De 150 mil a 200 mil</option>
+              <option value="Acima de 200 mil">Acima de 200 mil</option>
+            </select>
+          </div>
+
+          <p class="consent-text">
+            Ao preencher este formulário, autorizo que meus dados sejam utilizados para que a empresa entre em contato comigo por e-mail, telefone ou outros meios informados, com o objetivo de fornecer informações relacionadas aos produtos ou serviços de meu interesse.
+          </p>
+          
+          <button type="submit" class="submit-button" id="submit-button">
+            QUERO ME REGISTRAR
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+  const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+  const urlParams = new URLSearchParams(window.location.search);
+  const capturedUtms = {};
+
+  utmKeys.forEach(key => {
+    if (urlParams.has(key)) {
+      capturedUtms[key] = urlParams.get(key);
+    }
+  });
+
+  const form = document.getElementById('register-form');
+  const submitButton = document.getElementById('submit-button');
+  
+  const whatsappInput = document.querySelector('input[name="whatsapp"]');
+  whatsappInput.addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (!value.startsWith('55')) {
+      value = '55' + value;
+    }
+    e.target.value = '+' + value.slice(0, 13);
+  });
+  
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = {
+      nome: form.nome.value,
+      email: form.email.value,
+      whatsapp: form.whatsapp.value,
+      profissao: form.profissao.value, 
+      valor_investimento: form.valor_investimento.value,
+      ...capturedUtms 
+    };
+    
+    if (!formData.nome || !formData.email || !formData.whatsapp || formData.whatsapp.length < 14 || !formData.profissao || !formData.valor_investimento) {
+      alert('Por favor, preencha todos os campos obrigatórios corretamente.');
+      return;
+    }
+    
+    submitButton.disabled = true;
+    submitButton.textContent = 'ENVIANDO...';
+    
+    try {
+      const response1 = await fetch('', { <!--adicionar webhook-->
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+      
+      const response2 = await fetch('', { 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+      
+      if (response1.ok && response2.ok) {
+        // 🔥 Disparar evento do Meta Pixel
+        if (typeof fbq === 'function') {
+          fbq('track', 'CompleteRegistration');
+        }
+
+        alert('Cadastro realizado com sucesso. Redirecionando...');
+        form.reset();
+        
+        setTimeout(() => {
+          window.location.href = "pg_obrigado.html";
+        }, 1000);
+
+      } else {
+        throw new Error('Erro ao enviar formulário');
+      }
+    } catch (error) {
+      alert('Ocorreu um erro ao enviar o cadastro. Tente novamente.');
+      console.error(error);
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent = 'QUERO ME REGISTRAR';
+    }
+  });
+});
+  </script>
+</body>
+</html>
