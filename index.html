@@ -123,7 +123,7 @@
     submitButton.textContent = 'ENVIANDO...';
     
     try {
-      const response1 = await fetch('', { <!--adicionar webhook-->
+      const response1 = await fetch('https://n8neditor.arck1pro.shop/webhook-test/lp-lead-direto', { <!--adicionar webhook-->
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
